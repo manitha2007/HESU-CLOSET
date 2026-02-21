@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Hesu Closet</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#d89b9b', // Rose Gold/Dusty Pink for female aesthetic
+                        dark: '#ffffff', // Instead of dark, using white
+                        darker: '#faf9f6', // Off-white/cream
+                        borderColor: '#e5e7eb'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-darker text-stone-800 font-sans min-h-screen">
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 bg-darker z-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg border border-borderColor w-96 max-w-[90%] text-center shadow-xl">
+            <h2 class="text-3xl font-serif text-primary mb-2">HESU CLOSET</h2>
+            <p class="text-sm text-stone-500 mb-6 uppercase tracking-widest">Admin Authorization</p>
+            <input type="password" id="passwordInput" placeholder="Enter Admin Password"
+                class="w-full bg-stone-50 border border-borderColor px-4 py-3 text-stone-800 focus:outline-none focus:border-primary transition-colors mb-4 rounded-sm text-center">
+            <button onclick="checkPassword()"
+                class="w-full bg-primary text-white font-semibold uppercase tracking-widest text-sm py-3 hover:opacity-90 transition-colors rounded-sm">Login</button>
+            <p id="loginError" class="text-red-500 text-xs mt-4 hidden">Incorrect password!</p>
+            <p class="text-stone-400 text-xs mt-6">Hint: Default password is 'hesu'</p>
+        </div>
+    </div>
+
+    <!-- Admin Content -->
+    <div id="adminContent" class="hidden">
+        <nav class="bg-white border-b border-borderColor px-6 py-4 flex justify-between items-center shadow-sm">
+            <h1 class="text-xl font-serif text-primary">Owner Dashboard</h1>
+            <div class="flex space-x-4">
+                <a href="index.html"
+                    class="text-sm text-stone-500 hover:text-primary uppercase tracking-wider flex items-center"><i
+                        data-feather="external-link" class="w-4 h-4 mr-2"></i> View Site</a>
+                <button onclick="logout()"
+                    class="text-sm text-red-500 hover:text-red-400 uppercase tracking-wider">Logout</button>
+            </div>
+        </nav>
+
+        <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Add Product Section -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-lg border border-borderColor h-fit shadow-sm">
+                <h2 class="text-xl font-serif mb-6 border-b border-borderColor pb-2">Add New Item</h2>
+                <form id="productForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Item Image</label>
+                        <input type="file" id="pImage" accept="image/*"
+                            class="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 transition-colors cursor-pointer bg-stone-50 py-2 px-2 border border-borderColor rounded-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Item Name</label>
+                        <input type="text" id="pName" placeholder="e.g. Summer Floral Dress"
+                            class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Price (Rs)</label>
+                        <input type="text" id="pPrice" placeholder="e.g. 2500"
+                            class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Category (Optional)</label>
+                        <input type="text" id="pCategory" placeholder="e.g. Dresses"
+                            class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-stone-500 mb-1">Badge (Optional)</label>
+                        <input type="text" id="pBadge" placeholder="e.g. New / Sale"
+                            class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-primary text-white font-semibold uppercase tracking-widest text-sm py-3 mt-4 hover:opacity-90 transition-colors rounded-sm">Add
+                        Item</button>
+                </form>
+            </div>
+
+            <!-- Manage Features -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Contact Details -->
+                <div class="bg-white p-6 rounded-lg border border-borderColor shadow-sm">
+                    <h2 class="text-xl font-serif mb-6 border-b border-borderColor pb-2">Manage Contact Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">WhatsApp Number (Ex:
+                                9477XXXXXXX)</label>
+                            <input type="text" id="cWhatsapp"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Display Phone</label>
+                            <input type="text" id="cPhone"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Email</label>
+                            <input type="text" id="cEmail"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Address</label>
+                            <input type="text" id="cAddress"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                    </div>
+                    <button onclick="saveContact()"
+                        class="mt-6 bg-stone-200 text-stone-700 font-semibold uppercase tracking-widest text-xs py-2 px-6 hover:bg-stone-300 transition-colors rounded-sm">Save
+                        Contact Info</button>
+                    <span id="contactSaved" class="text-green-500 text-xs ml-4 hidden">Saved Successfully!</span>
+                </div>
+
+                <!-- Bank Details -->
+                <div class="bg-white p-6 rounded-lg border border-borderColor shadow-sm">
+                    <h2 class="text-xl font-serif mb-6 border-b border-borderColor pb-2">Manage Bank Details</h2>
+                    <p class="text-xs text-stone-500 mb-4">These details will be shown to customers when they select
+                        "Bank Transfer" at checkout.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Bank Name</label>
+                            <input type="text" id="bName" placeholder="e.g. Commercial Bank"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Account Name</label>
+                            <input type="text" id="bAccName" placeholder="e.g. Hesu Closet"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Account Number</label>
+                            <input type="text" id="bAccNo" placeholder="e.g. 100023456789"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Branch</label>
+                            <input type="text" id="bBranch" placeholder="e.g. Colombo 07"
+                                class="w-full bg-stone-50 border border-borderColor px-4 py-2 text-stone-800 focus:border-primary focus:outline-none rounded-sm">
+                        </div>
+                    </div>
+                    <button onclick="saveBankDetails()"
+                        class="mt-6 bg-stone-200 text-stone-700 font-semibold uppercase tracking-widest text-xs py-2 px-6 hover:bg-stone-300 transition-colors rounded-sm">Save
+                        Bank Info</button>
+                    <span id="bankSaved" class="text-green-500 text-xs ml-4 hidden">Saved Successfully!</span>
+                </div>
+
+                <!-- Logo Upload Section -->
+                <div class="bg-white p-6 rounded-lg border border-borderColor shadow-sm">
+                    <h2 class="text-xl font-serif mb-6 border-b border-borderColor pb-2">Site Logo</h2>
+                    <div class="flex items-end gap-4">
+                        <div class="flex-1">
+                            <label class="block text-xs uppercase text-stone-500 mb-1">Upload New Logo (Transparent PNG
+                                recommended)</label>
+                            <input type="file" id="logoUpload" accept="image/*"
+                                class="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 transition-colors cursor-pointer bg-stone-50 py-2 px-2 border border-borderColor rounded-sm">
+                        </div>
+                        <button onclick="saveLogo()"
+                            class="bg-primary text-white font-semibold uppercase tracking-widest text-xs py-3 px-6 hover:opacity-90 transition-colors rounded-sm h-[42px] mb-[2px]">Save
+                            Logo</button>
+                    </div>
+                    <div class="mt-4">
+                        <span id="logoSaved" class="text-green-500 text-xs hidden">Logo Updated Successfully!</span>
+                        <div id="currentLogoPreview"
+                            class="mt-4 p-4 border border-borderColor rounded-sm bg-stone-50 hidden inline-block">
+                            <img id="logoImg" class="h-12 object-contain filter invert-0">
+                            <button onclick="removeLogo()"
+                                class="mt-4 text-red-500 text-xs hover:text-red-400 w-full text-center border border-red-500/30 rounded py-1">Remove
+                                Custom Logo</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products List -->
+                <div class="bg-white p-6 rounded-lg border border-borderColor shadow-sm">
+                    <h2 class="text-xl font-serif mb-6 border-b border-borderColor pb-2">Your Current Collection</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="text-stone-500 text-xs uppercase tracking-widest border-b border-borderColor">
+                                    <th class="py-3 font-medium">Image</th>
+                                    <th class="py-3 font-medium">Product</th>
+                                    <th class="py-3 font-medium">Price</th>
+                                    <th class="py-3 font-medium text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProductTable" class="text-sm">
+                                <!-- Generated JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+
+        // 1. Authentication
+        function checkPassword() {
+            const pass = document.getElementById('passwordInput').value;
+            if (pass === 'hesu') {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('adminContent').classList.remove('hidden');
+                initAdmin();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+        function logout() { location.reload(); }
+
+        // 2. State Setup
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+
+        let contactInfo = JSON.parse(localStorage.getItem('contact_info')) || {
+            whatsapp: '94771234567', phone: '+94 77 123 4567', email: 'hello@hesucloset.com', address: 'Colombo, Sri Lanka'
+        };
+
+        let bankInfo = JSON.parse(localStorage.getItem('bank_info')) || {
+            name: '', accName: '', accNo: '', branch: ''
+        };
+
+        function initAdmin() {
+            renderTable();
+            document.getElementById('cWhatsapp').value = contactInfo.whatsapp;
+            document.getElementById('cPhone').value = contactInfo.phone;
+            document.getElementById('cEmail').value = contactInfo.email;
+            document.getElementById('cAddress').value = contactInfo.address;
+
+            document.getElementById('bName').value = bankInfo.name;
+            document.getElementById('bAccName').value = bankInfo.accName;
+            document.getElementById('bAccNo').value = bankInfo.accNo;
+            document.getElementById('bBranch').value = bankInfo.branch;
+
+            loadLogoPreview();
+        }
+
+        // Handle Bank Details
+        function saveBankDetails() {
+            bankInfo = {
+                name: document.getElementById('bName').value,
+                accName: document.getElementById('bAccName').value,
+                accNo: document.getElementById('bAccNo').value,
+                branch: document.getElementById('bBranch').value
+            };
+            localStorage.setItem('bank_info', JSON.stringify(bankInfo));
+            document.getElementById('bankSaved').classList.remove('hidden');
+            setTimeout(() => document.getElementById('bankSaved').classList.add('hidden'), 3000);
+        }
+
+        // Handle Logo
+        function loadLogoPreview() {
+            const savedLogo = localStorage.getItem('site_logo');
+            if (savedLogo) {
+                document.getElementById('currentLogoPreview').classList.remove('hidden');
+                document.getElementById('logoImg').src = savedLogo;
+            } else {
+                document.getElementById('currentLogoPreview').classList.add('hidden');
+            }
+        }
+
+        function saveLogo() {
+            const fileInput = document.getElementById('logoUpload');
+            if (!fileInput.files[0]) return alert("Please select a valid image file first.");
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                localStorage.setItem('site_logo', event.target.result);
+                document.getElementById('logoSaved').classList.remove('hidden');
+                setTimeout(() => document.getElementById('logoSaved').classList.add('hidden'), 3000);
+                loadLogoPreview();
+                fileInput.value = "";
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+
+        function removeLogo() {
+            if (confirm("Remove custom logo and revert to text?")) {
+                localStorage.removeItem('site_logo');
+                loadLogoPreview();
+            }
+        }
+
+        // 3. Render Table
+        function renderTable() {
+            const tbody = document.getElementById('adminProductTable');
+            tbody.innerHTML = '';
+            products.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-borderColor hover:bg-stone-50 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3">
+                        <img src="${p.image}" class="w-12 h-16 object-cover rounded-sm border border-borderColor shadow-sm">
+                    </td>
+                    <td class="py-3">
+                        <div class="font-medium text-stone-800">${p.name}</div>
+                        <div class="text-xs text-stone-500">${p.category || 'Categorized'}</div>
+                    </td>
+                    <td class="py-3 text-primary font-semibold">${p.price}</td>
+                    <td class="py-3 text-right">
+                        <button onclick="deleteProduct(${index})" class="text-red-500 hover:text-red-700 transition-colors p-2 bg-red-50 rounded-sm" title="Delete">
+                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            feather.replace();
+        }
+
+        // 4. Delete
+        function deleteProduct(index) {
+            if (confirm("Are you sure you want to delete this product?")) {
+                products.splice(index, 1);
+                localStorage.setItem('products', JSON.stringify(products));
+                renderTable();
+            }
+        }
+
+        // 5. Add New Image (Read as Base64 to save locally)
+        document.getElementById('productForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('pImage');
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const category = document.getElementById('pCategory').value;
+            const badge = document.getElementById('pBadge').value;
+
+            if (!fileInput.files[0]) {
+                alert("Please select an image!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const base64Image = event.target.result;
+                products.push({
+                    name, price, category, badge, image: base64Image
+                });
+                localStorage.setItem('products', JSON.stringify(products));
+                renderTable();
+                document.getElementById('productForm').reset();
+                alert("Product Added Successfully!");
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        });
+
+        // 6. Save Contact Info
+        function saveContact() {
+            contactInfo = {
+                whatsapp: document.getElementById('cWhatsapp').value,
+                phone: document.getElementById('cPhone').value,
+                email: document.getElementById('cEmail').value,
+                address: document.getElementById('cAddress').value
+            };
+            localStorage.setItem('contact_info', JSON.stringify(contactInfo));
+            document.getElementById('contactSaved').classList.remove('hidden');
+            setTimeout(() => document.getElementById('contactSaved').classList.add('hidden'), 3000);
+        }
+
+    </script>
+</body>
+
+</html>
